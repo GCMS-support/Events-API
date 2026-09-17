@@ -46,7 +46,7 @@ for the matching revision so an older deployment cannot produce a false pass.
 Repository variables:
 
 - DOCKERHUB_USERNAME: artemlavrent (enables publishing)
-- RENDER_URL: the verified public service URL (enables deployment)
+- RENDER_URL: https://events-api-artemlavrent.onrender.com (enables deployment)
 
 Repository secrets:
 
@@ -66,7 +66,15 @@ redeploy. This is a coursework demo, not a durable production data store.
 
 - GitHub: https://github.com/GCMS-support/Events-API
 - Docker Hub: https://hub.docker.com/r/artemlavrent/events-api
-- Render: record the actual URL only after deployment and smoke checks pass.
+- Render: https://events-api-artemlavrent.onrender.com
 
 An empty Docker repository is not a published image. A prepared workflow is not
 evidence that CI has passed. Submit the three links only after each is verified.
+## Verified results
+
+On 2026-09-17, all 30 tests passed with 97.89% coverage. Docker tests,
+production-image HTTP smoke checks and Docker Hub publication passed in
+https://github.com/GCMS-support/Events-API/actions/runs/35206523068.
+The public Render API passed health, revision, events and documentation checks.
+GitHub Actions is configured to publish and deploy subsequent main commits
+and wait for the public API to return the new commit revision.
