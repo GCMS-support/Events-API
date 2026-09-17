@@ -1,8 +1,10 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, current_app
 from models import db, User
 from flask_jwt_extended import create_access_token
 
+
 auth_bp = Blueprint('auth', __name__, url_prefix='/api/auth')
+
 
 @auth_bp.route('/register', methods=['POST'])
 def register():
@@ -18,13 +20,14 @@ def register():
     user.set_password(data['password'])
     
     # First user becomes admin (for demo purposes)
-    if User.query.count() == 0:
+    if current_app.config['FIRST_USER_ADMIN'] and User.query.count() == 0:
         user.is_admin = True
     
     db.session.add(user)
     db.session.commit()
     
     return jsonify({'message': 'User created successfully', 'user': user.to_dict()}), 201
+
 
 @auth_bp.route('/login', methods=['POST'])
 def login():
@@ -44,4 +47,6 @@ def login():
         'access_token': access_token,
         'user': user.to_dict()
     }), 200
+
+
 
