@@ -37,12 +37,6 @@ def rsvp(event_id):
         if not is_admin:
             return jsonify({'error': 'Admin access required for this event'}), 403
     
-    # Check capacity if set
-    if event.capacity is not None:
-        current_attendees = len([r for r in event.rsvps if r.attending])
-        if current_attendees >= event.capacity:
-            return jsonify({'error': 'Event is at full capacity'}), 400
-    
     # Check if user already RSVP'd
     existing_rsvp = None
     if user_id:
@@ -50,6 +44,14 @@ def rsvp(event_id):
     
     # Default to attending=True if not specified
     attending = data.get('attending', True)
+
+    # Only a new attendee consumes a place. Existing attendees can cancel
+    # or repeat their RSVP even when the event is full.
+    needs_place = attending and not (existing_rsvp and existing_rsvp.attending)
+    if needs_place and event.capacity is not None:
+        current_attendees = sum(r.attending for r in event.rsvps)
+        if current_attendees >= event.capacity:
+            return jsonify({'error': 'Event is at full capacity'}), 400
     
     if existing_rsvp:
         # Update existing RSVP
