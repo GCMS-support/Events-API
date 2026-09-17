@@ -10,9 +10,11 @@ from routes.rsvps import rsvps_bp
 import yaml
 import os
 
-def create_app():
+def create_app(test_config=None):
     app = Flask(__name__)
     app.config.from_object(Config)
+    if test_config is not None:
+        app.config.update(test_config)
     
     # Initialize extensions
     db.init_app(app)
@@ -52,6 +54,7 @@ def create_app():
         return jsonify({
             'name': 'Evently API',
             'version': '1.0.0',
+            'revision': os.environ.get('APP_REVISION', 'local'),
             'description': 'A Flask-based REST API for managing events and RSVPs with different access levels',
             'documentation': {
                 'swagger_ui': '/apidocs',
@@ -84,5 +87,5 @@ def create_app():
 
 if __name__ == '__main__':
     app = create_app()
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', '5000')))
 
