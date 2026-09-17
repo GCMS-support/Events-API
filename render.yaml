@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: events-api-artemlavrent
+    runtime: image
+    plan: free
+    image:
+      url: docker.io/artemlavrent/events-api:latest
+    healthCheckPath: /api/health
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: JWT_SECRET_KEY
+        generateValue: true
+      - key: FIRST_USER_ADMIN
+        value: 'false'
+      - key: PORT
+        value: '10000'
